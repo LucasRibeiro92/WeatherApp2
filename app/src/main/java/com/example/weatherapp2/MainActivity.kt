@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     /*-23.2927, Longitude: -51.1732*/
     private lateinit var binding: ActivityMainBinding
-    private lateinit var timeZoneTextView: TextView
+    private lateinit var currentTemperatureTextView: TextView
+    private lateinit var currentConditionTextView: TextView
     private val BASE_URL = "https://api.openweathermap.org/data/3.0/"
     private val API_KEY = "6aecdceab5208708eb7fdf190e00e5d1"
     private val TAG = "CHECK_RESPONSE"
@@ -38,7 +39,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        timeZoneTextView = binding.timeZoneTextView
+        currentTemperatureTextView = binding.currentTemperatureTextView
+        currentConditionTextView = binding.currentConditionTextView
 
         // Inicialize o FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -71,7 +73,10 @@ class MainActivity : AppCompatActivity() {
                 {
                     val weatherResponse = p1.body()
                     weatherResponse?.let {
-                        timeZoneTextView.text = "Time Zone: ${weatherResponse.timezone}"
+                        currentTemperatureTextView.text = "Temperature: ${weatherResponse.current.temp}"
+                        currentConditionTextView.text = "Condition: ${weatherResponse.current.clouds}"
+                        val backgroundImageId = determineBackgroundImage(weatherResponse.current.weather[0].main)
+                        binding.root.setBackgroundResource(backgroundImageId)
                     }
                 }
             }
@@ -82,6 +87,18 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
+
+
+    private fun determineBackgroundImage(weatherCondition: String): Int {
+        return when (weatherCondition) {
+            //"Clear" -> R.drawable.clear_background
+            //"Clouds" -> R.drawable.cloudy_background
+            "Rain" -> R.drawable.rainy_background
+            // Adicione mais condições conforme necessário
+            else -> R.drawable.rainy_background // Imagem de fundo padrão para outras condições
+        }
+    }
+
 
     // Método para obter a última localização conhecida
     @SuppressLint("MissingPermission")

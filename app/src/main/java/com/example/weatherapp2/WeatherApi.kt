@@ -10,6 +10,7 @@ interface WeatherApi {
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("exclude") exclude: String = "hourly,daily,minutely",
+        @Query("units") units: String = "imperial",
         @Query("appid") apiKey: String
     ): Call<WeatherResponse>
 }
