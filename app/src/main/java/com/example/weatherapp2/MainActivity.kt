@@ -18,6 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import android.Manifest
 import android.annotation.SuppressLint
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     /*-23.2927, Longitude: -51.1732*/
     private lateinit var binding: ActivityMainBinding
+    private lateinit var  weatherIconImageView: ImageView
     private lateinit var currentTemperatureTextView: TextView
     private lateinit var currentConditionTextView: TextView
     private val BASE_URL = "https://api.openweathermap.org/data/3.0/"
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        weatherIconImageView = binding.weatherIconImageView
         currentTemperatureTextView = binding.currentTemperatureTextView
         currentConditionTextView = binding.currentConditionTextView
 
@@ -64,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             .create(WeatherApi::class.java)
 
         api.getWeather(lat, lon, apiKey = API_KEY).enqueue(object : Callback<WeatherResponse>{
-            @SuppressLint("SetTextI18n")
+            @SuppressLint("SetTextI18n", "DiscouragedApi")
             override fun onResponse(
                 p0: Call<WeatherResponse>,
                 p1: Response<WeatherResponse>)
@@ -73,10 +76,13 @@ class MainActivity : AppCompatActivity() {
                 {
                     val weatherResponse = p1.body()
                     weatherResponse?.let {
-                        currentTemperatureTextView.text = "Temperature: ${weatherResponse.current.temp}"
+                        val weatherDetails = weatherResponse.current.weather.firstOrNull()
+                        val iconName = "i" + weatherDetails?.icon
+                        val iconResourceId = resources.getIdentifier(iconName, "drawable", packageName)
+                        weatherIconImageView.setImageResource(iconResourceId)
+                        currentTemperatureTextView.text = "${weatherResponse.current.temp} ºF"
                         currentConditionTextView.text = "Condition: ${weatherResponse.current.clouds}"
-                        val backgroundImageId = determineBackgroundImage(weatherResponse.current.weather[0].main)
-                        binding.root.setBackgroundResource(backgroundImageId)
+                        Log.d(TAG, "${p1.body()}")
                     }
                 }
             }
@@ -86,17 +92,6 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-    }
-
-
-    private fun determineBackgroundImage(weatherCondition: String): Int {
-        return when (weatherCondition) {
-            //"Clear" -> R.drawable.clear_background
-            //"Clouds" -> R.drawable.cloudy_background
-            "Rain" -> R.drawable.rainy_background
-            // Adicione mais condições conforme necessário
-            else -> R.drawable.rainy_background // Imagem de fundo padrão para outras condições
-        }
     }
 
 
