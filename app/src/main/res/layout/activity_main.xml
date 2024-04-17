@@ -17,6 +17,8 @@
         android:layout_marginBottom="8dp"
         app:cardCornerRadius="10dp"
         app:cardBackgroundColor="#99FFFFFF"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="true"
         android:layout_above="@id/divider">
 
         <RelativeLayout
@@ -25,6 +27,17 @@
             android:padding="16dp">
 
             <!-- Current Weather Information -->
+
+            <!-- ImageView to display weather icon -->
+            <ImageView
+                android:id="@+id/weatherIconImageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+
+                android:src="@drawable/ic_launcher_foreground" />
+
             <TextView
                 android:id="@+id/currentTemperatureTextView"
                 android:layout_width="wrap_content"
@@ -32,20 +45,21 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="25°C"
+                android:text="25 °C"
                 android:textColor="@android:color/black"
-                android:textSize="24sp" />
+                android:textSize="35sp"
+                android:layout_toEndOf="@id/weatherIconImageView"/>
 
-            <!-- ImageView to display weather icon -->
+
 
             <ImageView
-                android:id="@+id/weatherIconImageView"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="16dp"
-                android:layout_toEndOf="@id/currentTemperatureTextView"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:id="@+id/refreshDataWeatherImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/baseline_cached_24" />
 
             <TextView
                 android:id="@+id/currentConditionTextView"
@@ -54,9 +68,9 @@
                 android:layout_below="@id/currentTemperatureTextView"
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/poppins"
-                android:text="Condition: Sunny"
+                android:text="Sunny"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/humidityTextView"
@@ -67,7 +81,18 @@
                 android:fontFamily="@font/poppins"
                 android:text="Humidity: 60%"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/windTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/humidityTextView"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/poppins"
+                android:text="Wind: 60 mph"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
@@ -98,7 +123,9 @@
             android:layout_marginBottom="8dp"
             android:layout_above="@id/lowerHalfDivider"
             app:cardCornerRadius="10dp"
-            app:cardBackgroundColor="#99FFFFFF">
+            app:cardBackgroundColor="#99FFFFFF"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -138,6 +165,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="#99FFFFFF"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="true"
             app:cardCornerRadius="10dp">
 
             <RelativeLayout
