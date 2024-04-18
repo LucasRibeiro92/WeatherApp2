@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import com.example.weatherapp2.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -15,7 +14,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
@@ -23,13 +21,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.example.weatherapp2.weatherapi.WeatherApi
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     /*-23.2927, Longitude: -51.1732*/
 
-    //Bindings
+    //Declaring the bindings
     private lateinit var binding: ActivityMainBinding
     private lateinit var  weatherIconImageView: ImageView
     private lateinit var refreshDataWeatherImageView: ImageView
@@ -37,7 +36,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentConditionTextView: TextView
     private lateinit var humidityTextView: TextView
     private lateinit var windTextView: TextView
-
+    private lateinit var tomorrowMinTemperatureTextView: TextView
+    private lateinit var tomorrowMaxTemperatureTextView: TextView
+    private lateinit var dayAfterTomorrowMinTemperatureTextView: TextView
+    private lateinit var dayAfterTomorrowMaxTemperatureTextView: TextView
+    //Declaring general variables
     private val BASE_URL = "https://api.openweathermap.org/data/3.0/"
     private val API_KEY = "6aecdceab5208708eb7fdf190e00e5d1"
     private val TAG = "CHECK_RESPONSE"
@@ -47,16 +50,8 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        weatherIconImageView = binding.weatherIconImageView
-        refreshDataWeatherImageView = binding.refreshDataWeatherImageView
-        currentTemperatureTextView = binding.currentTemperatureTextView
-        currentConditionTextView = binding.currentConditionTextView
-        humidityTextView = binding.humidityTextView
-        windTextView = binding.windTextView
-
+        //Instantiating the bindings
+        setupBindings()
 
         // Inicialize o FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -80,6 +75,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    fun setupBindings(){
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        //Iniatilizing the bindings
+        weatherIconImageView = binding.weatherIconImageView
+        refreshDataWeatherImageView = binding.refreshDataWeatherImageView
+        currentTemperatureTextView = binding.currentTemperatureTextView
+        currentConditionTextView = binding.currentConditionTextView
+        humidityTextView = binding.humidityTextView
+        windTextView = binding.windTextView
+        tomorrowMinTemperatureTextView = binding.tomorrowMinTemperatureTextView
+        tomorrowMaxTemperatureTextView = binding.tomorrowMaxTemperatureTextView
+        dayAfterTomorrowMinTemperatureTextView = binding.dayAfterTomorrowMinTemperatureTextView
+        dayAfterTomorrowMaxTemperatureTextView = binding.dayAfterTomorrowMaxTemperatureTextView
     }
 
     private fun getWeather(lat: Double, lon: Double) {
@@ -111,8 +123,8 @@ class MainActivity : AppCompatActivity() {
                                 ) else it.toString()
                             }
                         }
-                        humidityTextView.text = "${weatherResponse.current.humidity}%"
-                        windTextView.text = "${weatherResponse.current.windSpeed} mph"
+                        humidityTextView.text = "Humidity: ${weatherResponse.current.humidity}%"
+                        windTextView.text = "Wind: ${weatherResponse.current.windSpeed} mph"
                         Log.d(TAG, "${p1.body()}")
                     }
                 }
@@ -139,10 +151,13 @@ class MainActivity : AppCompatActivity() {
                 p0: Call<WeatherForecastResponse>,
                 p1: Response<WeatherForecastResponse>)
             {
+                Log.d(TAG, "${p1.body()}")
                 if (p1.isSuccessful)
                 {
                     val weatherForecastResponse = p1.body()
                     weatherForecastResponse?.let {
+                        tomorrowMinTemperatureTextView.text = "min: ${weatherForecastResponse.temperature.min}º"
+                        tomorrowMaxTemperatureTextView.text = "max: ${weatherForecastResponse.temperature.max}º"
                         /*val weatherDetails = weatherResponse.current.weather.firstOrNull()
                         val iconName = "i" + weatherDetails?.icon
                         val iconResourceId = resources.getIdentifier(iconName, "drawable", packageName)
@@ -177,6 +192,8 @@ class MainActivity : AppCompatActivity() {
                 {
                     val weatherForecastResponse = p1.body()
                     weatherForecastResponse?.let {
+                        dayAfterTomorrowMinTemperatureTextView.text = "min: ${weatherForecastResponse.temperature.min}º"
+                        dayAfterTomorrowMaxTemperatureTextView.text = "max: ${weatherForecastResponse.temperature.max}º"
                         /*val weatherDetails = weatherResponse.current.weather.firstOrNull()
                         val iconName = "i" + weatherDetails?.icon
                         val iconResourceId = resources.getIdentifier(iconName, "drawable", packageName)

@@ -139,9 +139,33 @@
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:text="Tomorrow"
-                    android:layout_marginStart="16dp" />
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/poppins_semibold"/>
 
-                <!-- Add other weather information for the first day here -->
+                <TextView
+                    android:id="@+id/tomorrowMinTemperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="min: 25 °C"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:layout_below="@id/firstDayTextView"/>
+
+                <TextView
+                    android:id="@+id/tomorrowMaxTemperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="max: 25 °C"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:layout_toEndOf="@id/tomorrowMinTemperatureTextView"
+                    android:layout_alignBaseline="@id/tomorrowMinTemperatureTextView"/>
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
@@ -181,9 +205,33 @@
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:text="Day after tomorrow"
-                    android:layout_marginStart="16dp" />
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/poppins_semibold"/>
 
-                <!-- Add other weather information for the second day here -->
+                <TextView
+                    android:id="@+id/dayAfterTomorrowMinTemperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="min: 25 °C"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:layout_below="@id/secondDayTextView"/>
+
+                <TextView
+                    android:id="@+id/dayAfterTomorrowMaxTemperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="max: 25 °C"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:layout_toEndOf="@id/dayAfterTomorrowMinTemperatureTextView"
+                    android:layout_alignBaseline="@id/dayAfterTomorrowMinTemperatureTextView"/>
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

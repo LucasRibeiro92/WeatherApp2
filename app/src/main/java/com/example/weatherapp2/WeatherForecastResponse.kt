@@ -3,32 +3,48 @@ package com.example.weatherapp2
 data class WeatherForecastResponse(
     val lat: Double,
     val lon: Double,
-    val timezone: String,
-    val timezone_offset: Int,
-    val data: List<WeatherForecastData>
+    val tz: String,
+    val date: String,
+    val units: String,
+    val cloudCover: CloudCover,
+    val humidity: Humidity,
+    val precipitation: Precipitation,
+    val temperature: Temperature,
+    val pressure: Pressure,
+    val wind: Wind
 )
 
-data class WeatherForecastData(
-    val dt: Long,
-    val sunrise: Long,
-    val sunset: Long,
-    val temp: Double,
-    val feels_like: Double,
-    val pressure: Int,
-    val humidity: Int,
-    val dew_point: Double,
-    val uvi: Double,
-    val clouds: Int,
-    val visibility: Int,
-    val wind_speed: Double,
-    val wind_deg: Int,
-    val weather: List<WeatherForecastDetails>
+data class CloudCover(
+    val afternoon: Int
 )
 
-data class WeatherForecastDetails(
-    val id: Int,
-    val main: String,
-    val description: String,
-    val icon: String
+data class Humidity(
+    val afternoon: Double
+)
+
+data class Precipitation(
+    val total: Int
+)
+
+data class Temperature(
+    val min: Double,
+    val max: Double,
+    val afternoon: Double,
+    val night: Double,
+    val evening: Double,
+    val morning: Double
+)
+
+data class Pressure(
+    val afternoon: Double
+)
+
+data class Wind(
+    val max: WindMax
+)
+
+data class WindMax(
+    val speed: Double,
+    val direction: Double
 )
 
