@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private val BASE_URL = "https://api.openweathermap.org/data/3.0/"
     private val API_KEY = "6aecdceab5208708eb7fdf190e00e5d1"
     private val TAG = "CHECK_RESPONSE"
+    private val TAG_TRY = "CATCH"
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
@@ -51,7 +52,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Instantiating the bindings
-        setupBindings()
+        try {
+            setupBindings()
+        }catch (e: Exception){
+            Log.d(TAG_TRY, e.message.toString())
+        }
 
         // Inicialize o FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
