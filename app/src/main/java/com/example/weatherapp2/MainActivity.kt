@@ -23,7 +23,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import com.example.weatherapp2.weatherapi.WeatherApi
+import com.example.weatherapp2.weatherapi.ApiClient
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     //Declaring the bindings
     private lateinit var binding: ActivityMainBinding
-    private lateinit var  weatherIconImageView: ImageView
+    private lateinit var weatherIconImageView: ImageView
     private lateinit var refreshDataWeatherImageView: ImageView
     private lateinit var currentTemperatureTextView: TextView
     private lateinit var currentConditionTextView: TextView
@@ -43,12 +43,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dayAfterTomorrowMinTemperatureTextView: TextView
     private lateinit var dayAfterTomorrowMaxTemperatureTextView: TextView
     //Declaring general variables
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var apiClient: ApiClient
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1001
     private val BASE_URL = "https://api.openweathermap.org/data/3.0/"
     private val API_KEY = "6aecdceab5208708eb7fdf190e00e5d1"
     private val TAG = "CHECK_RESPONSE"
     private val TAG_TRY = "CATCH"
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +69,9 @@ class MainActivity : AppCompatActivity() {
         }catch (e: Exception){
             Log.d(TAG_TRY, e.message.toString())
         }
+
+        //Initializing Weather Api Client
+        //val apiClient = ApiClient.create()
 
         // Verifique se a permissão de localização foi concedida
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -136,13 +140,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getWeather(lat: Double, lon: Double) {
-        val api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(WeatherApi::class.java)
 
-        api.getWeather(lat, lon, apiKey = API_KEY).enqueue(object : Callback<WeatherResponse>{
+        val apiClient = ApiClient.create()
+
+        apiClient.getWeather(lat, lon, apiKey = API_KEY)
+            .enqueue(object : Callback<WeatherResponse>{
             @SuppressLint("SetTextI18n", "DiscouragedApi")
             override fun onResponse(
                 p0: Call<WeatherResponse>,
@@ -180,13 +182,10 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getTomorrowWeather(lat: Double, lon: Double) {
-        val api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(WeatherApi::class.java)
 
-        api.getTomorrowWeather(lat, lon, apiKey = API_KEY).enqueue(object : Callback<WeatherForecastResponse>{
+        val apiClient = ApiClient.create()
+
+        apiClient.getTomorrowWeather(lat, lon, apiKey = API_KEY).enqueue(object : Callback<WeatherForecastResponse>{
             @SuppressLint("SetTextI18n", "DiscouragedApi")
             override fun onResponse(
                 p0: Call<WeatherForecastResponse>,
@@ -217,13 +216,10 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getDayAfterTomorrowWeather(lat: Double, lon: Double) {
-        val api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(WeatherApi::class.java)
 
-        api.getDayAfterTomorrowWeather(lat, lon, apiKey = API_KEY).enqueue(object : Callback<WeatherForecastResponse>{
+        val apiClient = ApiClient.create()
+
+        apiClient.getDayAfterTomorrowWeather(lat, lon, apiKey = API_KEY).enqueue(object : Callback<WeatherForecastResponse>{
             @SuppressLint("SetTextI18n", "DiscouragedApi")
             override fun onResponse(
                 p0: Call<WeatherForecastResponse>,

@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-interface WeatherApi {
+interface ApiService {
     @GET("onecall")
     fun getWeather(
         @Query("lat") latitude: Double,
