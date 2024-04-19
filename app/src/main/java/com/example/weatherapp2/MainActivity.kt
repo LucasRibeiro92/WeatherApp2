@@ -16,11 +16,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import com.example.weatherapp2.weatherapi.WeatherApi
 import java.util.Locale
 
@@ -50,7 +52,9 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         //Instantiating the bindings
         try {
             setupBindings()
@@ -59,12 +63,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Inicialize o FusedLocationProviderClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        try {
+            setupFusedLocation()
+        }catch (e: Exception){
+            Log.d(TAG_TRY, e.message.toString())
+        }
 
         // Verifique se a permissão de localização foi concedida
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Permissão ainda não concedida, solicitar permissão em tempo de execução
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            requestLocationPermission()
         } else {
             // Permissão já concedida, iniciar a solicitação de localização
             getLastLocation()
@@ -73,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         refreshDataWeatherImageView.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Permissão ainda não concedida, solicitar permissão em tempo de execução
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+                requestLocationPermission()
             } else {
                 // Permissão já concedida, iniciar a solicitação de localização
                 getLastLocation()
@@ -82,11 +90,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setupBindings(){
+    // Method to setup bindings
+    private fun setupBindings(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Iniatilizing the bindings
         weatherIconImageView = binding.weatherIconImageView
         refreshDataWeatherImageView = binding.refreshDataWeatherImageView
         currentTemperatureTextView = binding.currentTemperatureTextView
@@ -97,6 +105,34 @@ class MainActivity : AppCompatActivity() {
         tomorrowMaxTemperatureTextView = binding.tomorrowMaxTemperatureTextView
         dayAfterTomorrowMinTemperatureTextView = binding.dayAfterTomorrowMinTemperatureTextView
         dayAfterTomorrowMaxTemperatureTextView = binding.dayAfterTomorrowMaxTemperatureTextView
+    }
+
+    private fun setupFusedLocation(){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    }
+
+    // Method to request location permission
+    private fun requestLocationPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    // Method to deal with the result of the request permission
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissão de localização concedida, iniciar a solicitação de localização
+                getLastLocation()
+            } else {
+                // Permissão de localização negada pelo usuário
+                showPermissionExplanationDialog()
+            }
+        }
     }
 
     private fun getWeather(lat: Double, lon: Double) {
@@ -237,19 +273,22 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // Método para lidar com o resultado da solicitação de permissão
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permissão de localização concedida, iniciar a solicitação de localização
-                getLastLocation()
-            } else {
-                // Permissão de localização negada pelo usuário
-                // Você pode lidar com isso exibindo uma mensagem de erro ou tomando outra ação apropriada
+    // Método para mostrar um diálogo explicando a necessidade da permissão de localização
+    private fun showPermissionExplanationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Permissão de Localização Necessária")
+            .setMessage("Este aplicativo requer permissão de localização para funcionar corretamente.")
+            .setPositiveButton("OK") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+                // Solicitar permissão de localização
+                requestLocationPermission()
             }
-        }
+            .setNegativeButton("Cancelar") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+                // Aqui você pode lidar com o caso em que o usuário cancela a solicitação de permissão
+                requestLocationPermission()
+            }
+            .setCancelable(false)
+            .show()
     }
-
 }
